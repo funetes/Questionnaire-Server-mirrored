@@ -27,11 +27,11 @@ db.Sequelize = Sequelize;
 
 db.Event = require('./event')(sequelize,Sequelize);
 db.Like = require('./like')(sequelize,Sequelize);
-db.Precentor = require('./presentor')(sequelize,Sequelize);
+db.Presentor = require('./presentor')(sequelize,Sequelize);
 db.Question = require('./question')(sequelize,Sequelize);
 
-db.Precentor.hasMany(db.Event,{foreignKey:'id'});
-db.Event.belongsTo(db.Precentor);
+db.Presentor.hasMany(db.Event,{foreignKey:'id'});
+db.Event.belongsTo(db.Presentor);
 
 db.Event.hasMany(db.Question,{foreignKey:'id'});
 db.Question.belongsTo(db.Event);
