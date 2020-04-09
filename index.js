@@ -1,7 +1,6 @@
 require('dotenv').config();
 const audience = require('./Router/audience');
 const jwt = require('jsonwebtoken');
-
 const express = require('express');
 
 
@@ -12,9 +11,10 @@ const cors = require('cors');
 const port = process.env.PORT;
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const { Presentor } = require('./models');
+const { Presentor, Question } = require('./models');
 const user = require('./Router/user');
 const presentor = require('./Router/presentor');
+const event = require('./Router/event')
 
 const verification = function (req, res, next) {
   // console.log('this is req : ', req )
@@ -49,6 +49,7 @@ app.use(verification);
 app.use('/user', user);
 app.use('/audience', audience);
 app.use('/presentor', presentor);
-
+app.use('/event', event);
 
 http.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+

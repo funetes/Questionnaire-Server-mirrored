@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { Event } = require('../models');
+const { Presentor } = require('../models');
 
 const router = express.Router();
 

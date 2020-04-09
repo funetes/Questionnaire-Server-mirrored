@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/create', (req, res) => {
   // eventname, user_id, codename
   const user_id = req.user;
-  const eventname = req.body.eventname;
+  const { eventname } = req.body;
   const codename = req.body.code_name;
 
   Event.findOrCreate({
@@ -24,41 +24,25 @@ router.post('/create', (req, res) => {
       if (exist) {
         res.status(409).json({ result: 'fail' });
       } else {
-        res.status(200).json({ result: 'success' });
+        res.status(200).json({ result: 'success', eventId: instance.id });
       }
     });
 });
 
-/*
-  Presentor.findOrCreate({
-    where: {
-      email: body.email,
-    },
-    defaults: {
-      username: body.username,
-      password: crypto.createHmac('sha256', body.password).digest('hex'),
-    },
-  }).then((instance, exist) => {
-    if (exist) {
-      res.status(409).json({ result: 'fail' });
-    } else {
-      res.status(200).json({ result: 'success' });
-    }
-  });
-*/
-
-
 // 이벤트 리스트 불러오기
 router.get('/list', (req, res) => {
-  res.send('hello');
-});
-
-// 질문 리스트 불러오기
-router.get('/questions', (req, res) => {
-  console.log('this is token : ', req.headers.authorization);
-
-
-  res.send('hello');
+  const user_id = req.user;
+  Event.findAll({
+    where: {
+      presentorId: user_id,
+    },
+  })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).end();
+    });
 });
 
 
