@@ -1,0 +1,43 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id='form' action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var chatMessage = document.getElementById('m');
+
+        document.getElementById('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            socket.emit('login', {
+                email : 'khe@hahaha.net',
+                password : '12312'            })
+            // socket.emit('chat message', { text : 'Hello' } );
+        })
+
+        socket.on('login', data => {
+            console.log(data)
+        });
+
+        socket.on('chat', data => {
+            console.log(data)
+        })
+
+
+
+    </script>
+
+
+</body>
+</html> -->
