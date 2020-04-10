@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id='form' action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
+
+    <button onclick='namespace(1)'>namespace1</button>
+    <button onclick='namespace(2)'>namespace2</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        function namespace(nsp) {
+        const namespace = io('/namespace' + nsp);
+          // news라는 이벤트를 받을 시 콘솔에 data.hello를 출력
+          namespace.on('news', (data) => {
+          console.log(data.hello);
+        });
+      }
+    </script>
+
+
+
+</body>
+</html>
