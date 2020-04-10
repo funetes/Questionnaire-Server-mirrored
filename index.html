@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,32 +12,22 @@
     </form>
 
 
+    <button onclick='namespace(1)'>namespace1</button>
+    <button onclick='namespace(2)'>namespace2</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
-        var chatMessage = document.getElementById('m');
 
-        document.getElementById('form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            socket.emit('login', {
-                email : 'khe@hahaha.net',
-                password : '12312'            })
-            // socket.emit('chat message', { text : 'Hello' } );
-        })
-
-        socket.on('login', data => {
-            console.log(data)
+        function namespace(nsp) {
+        const namespace = io('/namespace' + nsp);
+          // news라는 이벤트를 받을 시 콘솔에 data.hello를 출력
+          namespace.on('news', (data) => {
+          console.log(data.hello);
         });
-
-        socket.on('chat', data => {
-            console.log(data)
-        })
-
-
-
+      }
     </script>
 
 
+
 </body>
-</html> -->
+</html>
