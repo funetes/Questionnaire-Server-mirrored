@@ -24,7 +24,3 @@ router.post('/join', (req, res) => {
 module.exports = router;
 
 
-// app.use('/event/:id', function (req, res, next) {
-//   console.log('Request Type:', req.method);
-//   next();
-// });
