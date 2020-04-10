@@ -22,5 +22,3 @@ router.post('/join', (req, res) => {
 
 
 module.exports = router;
-
-
