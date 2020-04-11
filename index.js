@@ -1,29 +1,30 @@
-require('dotenv').config();
-const audience = require('./Router/audience');
-const jwt = require('jsonwebtoken');
-const express = require('express');
-
+require("dotenv").config();
+const audience = require("./Router/audience");
+const jwt = require("jsonwebtoken");
+const express = require("express");
 
 const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
-const cors = require('cors');
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const cors = require("cors");
 
 const port = process.env.PORT;
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const { Presentor, Question } = require('./models');
-const user = require('./Router/user');
-const presentor = require('./Router/presentor');
-const event = require('./Router/event');
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const { Presentor, Question } = require("./models");
+const user = require("./Router/user");
+const presentor = require("./Router/presentor");
+const event = require("./Router/event");
 
 const verification = function (req, res, next) {
-  const token = req.headers.authorization ? req.headers.authorization.slice(7) : null;
+  const token = req.headers.authorization
+    ? req.headers.authorization.slice(7)
+    : null;
 
   if (!token) {
     next();
   } else {
-    const decoded = jwt.verify(token, 'shhhhh');
+    const decoded = jwt.verify(token, "shhhhh");
     Presentor.findOne({
       where: {
         username: decoded.username,
@@ -33,7 +34,8 @@ const verification = function (req, res, next) {
       .then((data) => {
         if (data) {
           req.user = data.id;
-        } next();
+        }
+        next();
       })
       .catch((err) => {
         console.log(err);
@@ -41,35 +43,72 @@ const verification = function (req, res, next) {
   }
 };
 
-app.use(bodyParser.json());
-app.use(morgan('dev'));
-app.use(cors({
-  credentials: true,
-}));
+app.set("socketio", io);
 
+app.use(bodyParser.json());
+app.use(morgan("dev"));
+app.use(
+  cors({
+    credentials: true,
+  })
+);
 app.use(verification);
 
-app.get('/', (req, res) => {
+// for socketio routing
+app.set("socketio", io);
+
+app.get("/", (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
 // 라우팅
-app.use('/user', user);
-app.use('/audience', audience);
-app.use('/presentor', presentor);
-app.use('/event', event);
+app.use("/user", user);
+app.use("/audience", audience);
+app.use("/presentor", presentor);
+app.use("/event", event);
 
+// socketIO
+io.on("connect", (socket) => {
+  // Join 이벤트 수신
+  socket.on("join", ({ name, room }) => {
+    // room 이라는 namespace 만들기
+    socket.join(room);
 
-// SocketIO
-// NameSpace 1번
-const namespace1 = io.of('/:eventid');
-// connection을 받으면, news 이벤트에 hello 객체를 담아 보낸다
-namespace1.on('connection', (socket) => {
-  namespace1.emit('news', { hello: 'Someone connected at namespace1' });
+    // 해당 namespace에게 데이터 쏘기
+    io.to(room).emit("roomData", {
+      room,
+      name
+    });
+  });
+
+  // sendMessage 이벤트 수신
+  socket.on("sendMessage", ({ message, room}) => {
+    // 받은 메세지를 namespace 내 전체 emit
+    io.to(room).emit("message", { text: message });
+
+  });
+
+  socket.on("disconnect", () => {
+    const user = removeUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit("message", {
+        user: "Admin",
+        text: `${user.name} has left.`,
+      });
+      io.to(user.room).emit("roomData", {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
+    }
+  });
 });
 
+http.listen(port, () =>
+  console.log(`Example app listening at http://localhost:${port}`)
+);
 
-
+module.exports = io;
 
 /*
  식별:cookie?
@@ -89,6 +128,3 @@ namespace1.on('connection', (socket) => {
 
 });
 */
-
-
-http.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
