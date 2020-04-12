@@ -25,6 +25,14 @@ router.post("/join", (req, res) => {
   });
 });
 
+/*
+청중 입장 후 
+1. 여게어사 바로 질문리스트를 다 쏴줄것인지 
+2. 이벤트아이디만 주고 다시 /event/:id 쪽으로 질문리스트 get 요청 보내라고 할 지 
+논의 필요
+*/
+
+
 module.exports = router;
 
 /* Join Table (Event-Question)
