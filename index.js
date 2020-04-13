@@ -67,20 +67,19 @@ io.on("connect", (socket) => {
   }); 
 
   socket.on('sendMessage', ({ eventId, content }) => {
+
+    console.log('this is eventId : ', eventId)
     eventId = parseInt(eventId);
-    console.log('**********this is eventid : ', eventId, typeof eventId)
+    if(1 === eventId){
+      console.log('잘 왔습니다!')
+    } 
 
     Question.create({
       questioner : 'Park',
       content,
       eventId
-    })   
-
-    
-
+    })
   })
-
-
 });
 
 http.listen(port, () =>

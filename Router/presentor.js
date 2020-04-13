@@ -22,7 +22,6 @@ router.post('/create', (req, res) => {
       },
     })
       .spread((instance, created) => {
-        console.log('this is created : ', created)
         if(!created){
           res.status(409).json({ result: 'fail' });
         } else {

@@ -34,10 +34,10 @@ db.Question = require('./question')(sequelize, Sequelize);
 db.Presentor.hasMany(db.Event, { foreignKey: 'id' });
 db.Event.belongsTo(db.Presentor);
 
-db.Event.hasMany(db.Question, { foreignKey: 'id' });
-db.Question.belongsTo(db.Event);
+db.Event.hasMany(db.Question, { foreignKey: 'eventId', sourceKey : 'id' });
+db.Question.belongsTo(db.Event, { foreignKey : 'eventId', targetKey : 'id'});
 
-db.Question.hasMany(db.Like, { foreignKey: 'id' });
-db.Like.belongsTo(db.Question);
+db.Question.hasMany(db.Like, { foreignKey: 'questionId', sourceKey : 'id' });
+db.Like.belongsTo(db.Question, { foreignKey : 'questionId', targetKey : 'id'});
 
 module.exports = db;
