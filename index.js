@@ -40,26 +40,47 @@ app.use("/presentor", presentor);
 app.use("/event", event);
 
 // socket.io
-
 io.on("connect", (socket) => {
   // 연결 확인
   console.log('connected')
   // Join 이벤트 수신
-  socket.on("join", ({ eventCode }) => {
-    // room 이라는 namespace 만들기
+  socket.on("join", ({ eventId }) => {
     Event.findOne({ where : {
-      code_name : eventCode
+      id : eventId
     }})
     .then( data => {
-      let eventId = data.id
-      socket.join(eventId);
 
-      Question.findAll( { where : { eventId}})
-      .then(data => {
-        io.to(eventId).emit('allMessages', { data})
-      });
+      if(!data){
+        socket.emit('notfound', { result : 'event not found'})
+      } else {
+        let eventId = data.id
+
+        // room 만들기
+        socket.join(eventId);
+  
+        Question.findAll( { where : { eventId }})
+        .then(data => {
+          io.to(eventId).emit('allMessages', { data })
+        });
+      };      
     });
   }); 
+
+  socket.on('sendMessage', ({ eventId, content }) => {
+    eventId = parseInt(eventId);
+    console.log('**********this is eventid : ', eventId, typeof eventId)
+
+    Question.create({
+      questioner : 'Park',
+      content,
+      eventId
+    })   
+
+    
+
+  })
+
+
 });
 
 http.listen(port, () =>

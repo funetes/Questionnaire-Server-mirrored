@@ -11,18 +11,17 @@ router.post("/join", (req, res) => {
       code_name: req.body.code_name,
     },
   }).then((data) => {
-    if (!data) {
-      res.status(409).json({ result: "fail" });
+    console.log('this is data : ', data)
+    if (data) {
+      res.status(200).json({ eventId : data.id });
     } else {
-      Question.findAll({
-        where: {
-          eventId: data.id,
-        },
-      }).then((data) => {
-        res.status(200).json(data);
-      });
+      res.status(203).json({ result : 'fail'})
     }
-  });
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json({ result : 'fail'})
+  })
 });
 
 /*
