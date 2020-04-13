@@ -40,6 +40,7 @@ app.use("/presentor", presentor);
 app.use("/event", event);
 
 // socket.io
+
 io.on("connect", (socket) => {
   // 연결 확인
   console.log('connected')

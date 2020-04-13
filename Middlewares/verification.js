@@ -7,6 +7,7 @@ const verification = function (req, res, next) {
       : null;
   
     if (!token) {
+      
       next();
     } else {
       const decoded = jwt.verify(token, "shhhhh");
@@ -18,6 +19,8 @@ const verification = function (req, res, next) {
       })
         .then((data) => {
           if (data) {
+
+            console.log('***************** verification process ******************')
             // 인증이 되면 req 객체에 user 라는 프로퍼티 만들어줌
             req.user = data.id;
           }

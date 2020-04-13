@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.get('/:id', (req, res) => {
   const eventId = req.params.id;
-
   Question.findAll({
     where: {
       eventId,
