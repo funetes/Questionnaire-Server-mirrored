@@ -27,6 +27,14 @@ router.post('/create', (req, res) => {
         res.status(200).json({ result: 'success', eventId: instance.id });
       }
     });
+    // spread 방식으로 바꿔야 fail 창이 뜸. 위의 경우 exist가 undefined라서 항상 success로 빠지게 됨
+    // .then((instance, created) => {
+    //   if(!created){
+    //     res.status(409).json({ result: 'fail' });
+    //   } else {
+    //     res.status(200).json({ result: 'success', eventId: instance.id });
+    //   }
+    // })
 });
 
 // 이벤트 리스트 불러오기

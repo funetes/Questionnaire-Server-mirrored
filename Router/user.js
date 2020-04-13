@@ -16,13 +16,22 @@ router.post('/signup', (req, res) => {
       username: body.username,
       password: crypto.createHmac('sha256', body.password).digest('hex'),
     },
-  }).then((instance, exist) => {
+  })
+  .then((instance, exist) => {
     if (exist) {
       res.status(409).json({ result: 'fail' });
     } else {
       res.status(200).json({ result: 'success' });
     }
   });
+  // spread 방식으로 바꿔야 fail 창이 뜸. 위의 경우 exist가 undefined라서 항상 success로 빠지게 됨
+  // .spread( (instance, created) => {
+  //   if(!created){
+  //     res.status(409).json({ result: 'fail' });
+  //   } else {
+  //     res.status(200).json({ result: 'success' });
+  //   }
+  // })
 });
 
 
@@ -37,6 +46,7 @@ router.post('/signin', (req, res) => {
   })
     .then((data) => {
       if (data === null) {
+        // 응답 변경 후 API 변경 필요할듯
         res.status(204).send('hello');
       } else {
         const token = jwt.sign({ username: data.username, email: data.email }, 'shhhhh', { expiresIn: '10h' });

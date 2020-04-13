@@ -1,40 +1,51 @@
-const express = require('express');
-const { Event } = require('../models');
-const { io } = require('../index')
+const express = require("express");
+const { Event, Question } = require("../models");
+const { io } = require("../index");
 
 const router = express.Router();
 
 // 이벤트 입장
-router.post('/join', (req, res) => {
+router.post("/join", (req, res) => {
   Event.findOne({
     where: {
       code_name: req.body.code_name,
     },
-  })
-    .then((data) => {
-      if (!data) {
-        res.status(409).json({ result: 'fail' });
-      } else {
-        // data.id 를 이용해서 리다이렉션 + 해당 이벤트 질문들 쏴주기
-        res.status(200).json({ eventId: data.id });
-
-        const namespace1 = io.of('/:eventid');
-        namespace1.on('connection', (socket) => {
-          namespace1.emit('news', { hello: 'Someone connected at namespace1' });
-        });
-      }
-    });
+  }).then((data) => {
+    if (!data) {
+      res.status(409).json({ result: "fail" });
+    } else {
+      Question.findAll({
+        where: {
+          eventId: data.id,
+        },
+      }).then((data) => {
+        res.status(200).json(data);
+      });
+    }
+  });
 });
-
 
 /*
-// NameSpace 1번
-const namespace1 = io.of('/:eventid');
-// connection을 받으면, news 이벤트에 hello 객체를 담아 보낸다
-namespace1.on('connection', (socket) => {
-  namespace1.emit('news', { hello: 'Someone connected at namespace1' });
-});
+청중 입장 후 
+1. 여게어사 바로 질문리스트를 다 쏴줄것인지 
+2. 이벤트아이디만 주고 다시 /event/:id 쪽으로 질문리스트 get 요청 보내라고 할 지 
+논의 필요
 */
 
 
 module.exports = router;
+
+/* Join Table (Event-Question)
+      Event.findAll({
+        include: [
+          {
+            model: Question,
+          },
+        ],
+        where: {
+          id: event_id,
+        },
+      })
+      .then(data => console.log(data));
+
+*/
