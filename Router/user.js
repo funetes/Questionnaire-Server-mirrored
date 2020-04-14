@@ -17,21 +17,13 @@ router.post('/signup', (req, res) => {
       password: crypto.createHmac('sha256', body.password).digest('hex'),
     },
   })
-  .then((instance, exist) => {
-    if (exist) {
+  .spread( (instance, created) => {
+    if(!created){
       res.status(409).json({ result: 'fail' });
     } else {
       res.status(200).json({ result: 'success' });
     }
-  });
-  // spread 방식으로 바꿔야 fail 창이 뜸. 위의 경우 exist가 undefined라서 항상 success로 빠지게 됨
-  // .spread( (instance, created) => {
-  //   if(!created){
-  //     res.status(409).json({ result: 'fail' });
-  //   } else {
-  //     res.status(200).json({ result: 'success' });
-  //   }
-  // })
+  })
 });
 
 
@@ -51,7 +43,7 @@ router.post('/signin', (req, res) => {
       } else {
         const token = jwt.sign({ username: data.username, email: data.email }, 'shhhhh', { expiresIn: '10h' });
         // client에서 fetch 요청 보낼 때에는 Bearer 세팅 해줘야 함 : https://gist.github.com/egoing/cac3d6c8481062a7e7de327d3709505f
-        res.status(200).json({ token });
+        res.status(200).json({ token, presentorId : data.id , username : data.username}); //유저네임도 같이 요청!
       }
     })
     .catch((err) => {

@@ -1,7 +1,11 @@
 const jwt = require("jsonwebtoken");
 const { Presentor } = require("../models");
 
+
 const verification = function (req, res, next) {
+
+
+    // console.log('***************************************', req)
     const token = req.headers.authorization
       ? req.headers.authorization.slice(7)
       : null;

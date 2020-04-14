@@ -7,34 +7,33 @@ const router = express.Router();
 // 이벤트 생성
 router.post('/create', (req, res) => {
   // eventname, user_id, codename
-  const user_id = req.user;
-  const { eventname } = req.body;
-  const codename = req.body.code_name;
+  const { eventname, codename } = req.body
 
-  Event.findOrCreate({
-    where: {
-      eventname,
-    },
-    defaults: {
-      code_name: codename,
-      presentorId: user_id,
-    },
-  })
-    .then((instance, exist) => {
-      if (exist) {
-        res.status(409).json({ result: 'fail' });
-      } else {
-        res.status(200).json({ result: 'success', eventId: instance.id });
-      }
-    });
-    // spread 방식으로 바꿔야 fail 창이 뜸. 위의 경우 exist가 undefined라서 항상 success로 빠지게 됨
-    // .then((instance, created) => {
-    //   if(!created){
-    //     res.status(409).json({ result: 'fail' });
-    //   } else {
-    //     res.status(200).json({ result: 'success', eventId: instance.id });
-    //   }
-    // })
+  if(!req.user){
+    res.status(404).json({ result : 'fail'});
+  } else {
+    Event.findOrCreate({
+      where: {
+        eventname,
+        code_name: codename,
+      },
+      defaults: {
+        presentorId: req.user,
+      },
+    })
+      .spread((instance, created) => {
+        if(!created){
+          res.status(409).json({ result: 'fail' });
+        } else {
+          res.status(200).json({ result: 'success', eventId: instance.id });
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        res.status(500).json( { result : 'internal error '})
+      });
+  }
+
 });
 
 // 이벤트 리스트 불러오기

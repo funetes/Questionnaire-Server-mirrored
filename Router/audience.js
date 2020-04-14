@@ -1,6 +1,5 @@
 const express = require("express");
-const { Event, Question } = require("../models");
-const { io } = require("../index");
+const { Event } = require("../models");
 
 const router = express.Router();
 
@@ -11,41 +10,17 @@ router.post("/join", (req, res) => {
       code_name: req.body.code_name,
     },
   }).then((data) => {
-    if (!data) {
-      res.status(409).json({ result: "fail" });
+    console.log('this is data : ', data)
+    if (data) {
+      res.status(200).json({ eventId : data.id });
     } else {
-      Question.findAll({
-        where: {
-          eventId: data.id,
-        },
-      }).then((data) => {
-        res.status(200).json(data);
-      });
+      res.status(203).json({ result : 'fail'})
     }
-  });
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json({ result : 'fail'})
+  })
 });
 
-/*
-청중 입장 후 
-1. 여게어사 바로 질문리스트를 다 쏴줄것인지 
-2. 이벤트아이디만 주고 다시 /event/:id 쪽으로 질문리스트 get 요청 보내라고 할 지 
-논의 필요
-*/
-
-
 module.exports = router;
-
-/* Join Table (Event-Question)
-      Event.findAll({
-        include: [
-          {
-            model: Question,
-          },
-        ],
-        where: {
-          id: event_id,
-        },
-      })
-      .then(data => console.log(data));
-
-*/
