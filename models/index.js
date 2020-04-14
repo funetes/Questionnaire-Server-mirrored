@@ -31,8 +31,8 @@ db.Like = require('./like')(sequelize, Sequelize);
 db.Presentor = require('./presentor')(sequelize, Sequelize);
 db.Question = require('./question')(sequelize, Sequelize);
 
-db.Presentor.hasMany(db.Event, { foreignKey: 'id' });
-db.Event.belongsTo(db.Presentor);
+db.Presentor.hasMany(db.Event, { foreignKey: 'presentorId', sourceKey : 'id' });
+db.Event.belongsTo(db.Presentor, { foreignKey :'prsentorId', targetKey : 'id' });
 
 db.Event.hasMany(db.Question, { foreignKey: 'eventId', sourceKey : 'id' });
 db.Question.belongsTo(db.Event, { foreignKey : 'eventId', targetKey : 'id'});

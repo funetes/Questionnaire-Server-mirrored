@@ -68,17 +68,25 @@ io.on("connect", (socket) => {
 
   socket.on('sendMessage', ({ eventId, content }) => {
 
-    console.log('this is eventId : ', eventId)
     eventId = parseInt(eventId);
     if(1 === eventId){
       console.log('잘 왔습니다!')
     } 
-
+    
     Question.create({
       questioner : 'Park',
       content,
       eventId
     })
+    .then( () => {
+      return Question.findAll( { where : { eventId }})
+    })
+    .then(data => {
+      io.to(eventId).emit('allMessages', { data })
+    });
+
+
+
   })
 });
 
