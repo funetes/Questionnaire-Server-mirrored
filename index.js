@@ -12,7 +12,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 
 // DB
-const { Presentor, Event, Question } = require("./models");
+const { Event, Question, AuthKey } = require("./models");
 
 // Routes
 const audience = require("./Router/audience");
@@ -21,12 +21,12 @@ const presentor = require("./Router/presentor");
 const user = require("./Router/user");
 
 // MiddleWare
-const verification = require("./Middlewares/verification")
+const verification = require("./Middlewares/verification");
 
 // Modules
 app.use(bodyParser.json());
 app.use(morgan("dev"));
-app.use(cors({ credentials: true }));
+app.use(cors({ credentials: true, origin : 'http://localhost:3000' }));
 app.use(verification);
 
 app.get("/", (req, res) => {
@@ -39,22 +39,46 @@ app.use("/audience", audience);
 app.use("/presentor", presentor);
 app.use("/event", event);
 
-// socket.io
+
+const authKeyGenerator = () => {
+  return String(Math.floor(Math.random() * Math.pow(10,9)));
+};
+
 io.on("connect", (socket) => {
-  // 연결 확인
-  console.log('connected')
+  
+  console.log('connected');
+  let newAuthKey = authKeyGenerator();
+
   // Join 이벤트 수신
-  socket.on("join", ({ eventId }) => {
+  socket.on("join", ({ eventId, authKey }) => {
+
+    // client에서 보낸 authKey가 있는지 없는지 확인 
+    if(!authKey){
+      // authKey가 없으면 만들어주고 만든 값을 클라이언트에게 보내준다
+      AuthKey.findOrCreate({
+        where : { authKey : newAuthKey }})
+      .then(() => {
+        socket.emit('authKey', { newAuthKey });
+      });
+    } else {
+      // authKey가 있으면, authKey가 유효한지 확인
+      AuthKey.findOne({ where : { authKey }})
+        .then(data => {
+          // 유효하지 않은 authKey인 경우
+          if(!data){
+            return socket.emit('needNewKey', { result : false });
+          } 
+        })
+    };
+
     Event.findOne({ where : {
       id : eventId
     }})
     .then( data => {
-
       if(!data){
         socket.emit('notfound', { result : 'event not found'})
       } else {
         let eventId = data.id
-
         // room 만들기
         socket.join(eventId);
   
@@ -64,17 +88,21 @@ io.on("connect", (socket) => {
         });
       };      
     });
+
+
   }); 
 
-  socket.on('sendMessage', ({ eventId, content }) => {
+  socket.on('sendMessage', ({ eventId, content, authKey }) => {
+
+    console.log('this is the key : ', authKey)
 
     eventId = parseInt(eventId);
     if(1 === eventId){
       console.log('잘 왔습니다!')
-    } 
+    }; 
     
     Question.create({
-      questioner : 'Park',
+      questioner : authKey,
       content,
       eventId
     })
@@ -84,10 +112,14 @@ io.on("connect", (socket) => {
     .then(data => {
       io.to(eventId).emit('allMessages', { data })
     });
-
-
-
   })
+
+  socket.on('sendAnswered', ({ boolean, questionId, eventId }) => {
+    Question.update(
+      { answered : boolean },
+      { where : { id : questionId }}
+    )
+  });
 });
 
 http.listen(port, () =>

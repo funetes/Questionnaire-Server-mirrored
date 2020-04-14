@@ -4,19 +4,13 @@ const { Presentor } = require("../models");
 
 const verification = function (req, res, next) {
 
-  /*
-  1. 프레젠터 : 로그인 토큰 인증
-  2. 프레젠터 : 회원가입
-  3. 청중 (코드입장)
-  */
-    console.log('***************************************', req)
+
+    // console.log('***************************************', req)
     const token = req.headers.authorization
       ? req.headers.authorization.slice(7)
       : null;
   
     if (!token) {
-      // console.error(err.stack);
-      // res.status(401).send({ result : 'fail'})
       next();
     } else {
       const decoded = jwt.verify(token, "shhhhh");
