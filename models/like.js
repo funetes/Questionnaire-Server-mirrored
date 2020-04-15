@@ -7,7 +7,6 @@ module.exports = function(sequelize, DataTypes){
         audience_id:{
             type: DataTypes.STRING,
             allowNull: false,
-            unique:true
         }
     });
 }

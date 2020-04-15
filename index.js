@@ -12,7 +12,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 
 // DB
-const { Event, Question, AuthKey } = require("./models");
+const { Event, Question, AuthKey, Like } = require("./models");
 
 // Routes
 const audience = require("./Router/audience");
@@ -88,19 +88,13 @@ io.on("connect", (socket) => {
         });
       };      
     });
-
-
   }); 
 
   socket.on('sendMessage', ({ eventId, content, authKey }) => {
-
-    console.log('this is the key : ', authKey)
-
     eventId = parseInt(eventId);
     if(1 === eventId){
-      console.log('잘 왔습니다!')
-    }; 
-    
+      console.log('sendMessage ON')
+    };
     Question.create({
       questioner : authKey,
       content,
@@ -119,7 +113,87 @@ io.on("connect", (socket) => {
       { answered : boolean },
       { where : { id : questionId }}
     )
+    .then(() => {
+      return Question.findAll( { where : { eventId }})
+    })
+    .then(data => {
+      io.to(eventId).emit('allMessages', { data })
+    })
+
+
+
   });
+
+  socket.on('sendLike', ({ authKey, questionId, eventId }) => {
+    // 좋아요 버튼이 눌렸음을 수신.
+    console.log('sendLike ON')
+    // Like 테이블에서 레코드 없으면 만들어준다
+    Like.findOrCreate( { where : {
+      questionId,
+      audience_id : authKey
+    },
+    defaults : {
+      like : true
+    }
+  })
+  .spread((instance, created) => {
+    // 레코드가 새로 생성되었다면
+    if(created){
+      // Question 테이블에서 like가 true인 레코드 개수를 세어 반환한다
+      Question.findAndCountAll({
+          include : [ {
+            model : Like,
+            required : true,
+            where : { like : true , questionId : instance.questionId }
+          }],
+      })
+      .then(data => {
+        console.log('this is data : ', data)
+        Question.update(
+          { numberOfLikes : data.count },
+          { where : { id : questionId }}
+        )
+        .then(() => {
+          Question.findAll( { where : { eventId }})
+          .then(data => {
+            io.to(eventId).emit('allMessages', { data })
+          });
+        })
+      });
+    } else {      
+      Like.update(
+        { like : !instance.like},
+        { where : {
+          id : instance.id
+        }}
+      )
+      .then(() => {
+        Question.findAndCountAll({
+          include : [ {
+            model : Like,
+            required : true,
+            where : { like : true , questionId : instance.questionId }
+          }],
+      })
+      .then(data => {
+        Question.update(
+          { numberOfLikes : data.count },
+          { where : { id : questionId }}
+        )
+        .then(() => {
+          Question.findAll( { where : { eventId }})
+          .then(data => {
+            io.to(eventId).emit('allMessages', { data })
+          });
+        })
+      });
+      })
+    }
+  })
+  });
+
+
+
 });
 
 http.listen(port, () =>
