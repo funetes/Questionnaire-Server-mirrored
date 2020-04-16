@@ -6,8 +6,9 @@ const development = {
   database: process.env.DEVDATABASE,
   host: process.env.HOST,
   dialect: 'mysql',
-  timezone: '+09:00',
-
+  options : {
+    timezone: '+09:00',
+  }
 };
 
 const test = {
