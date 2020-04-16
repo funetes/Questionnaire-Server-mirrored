@@ -5,9 +5,7 @@ const { Presentor } = require('../models');
 
 const router = express.Router();
 
-// 회원가입
 router.post('/signup', (req, res) => {
-  console.log('signUp')
   const { body } = req;
   Presentor.findOrCreate({
     where: {
@@ -28,9 +26,7 @@ router.post('/signup', (req, res) => {
 });
 
 
-// 로그인
 router.post('/signin', (req, res) => {
-  console.log('signIn')
   const { body: { email, password } } = req;
   Presentor.findOne({
     where: {
@@ -40,12 +36,10 @@ router.post('/signin', (req, res) => {
   })
     .then((data) => {
       if (data === null) {
-        // 응답 변경 후 API 변경 필요할듯
-        res.status(204).send('hello');
+        res.status(204).send(null);
       } else {
         const token = jwt.sign({ username: data.username, email: data.email }, 'shhhhh', { expiresIn: '10d' });
-        // client에서 fetch 요청 보낼 때에는 Bearer 세팅 해줘야 함 : https://gist.github.com/egoing/cac3d6c8481062a7e7de327d3709505f
-        res.status(200).json({ token, presentorId : data.id , username : data.username}); //유저네임도 같이 요청!
+        res.status(200).json({ token, presentorId : data.id , username : data.username});
       }
     })
     .catch((err) => {
