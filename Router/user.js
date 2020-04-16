@@ -7,6 +7,7 @@ const router = express.Router();
 
 // 회원가입
 router.post('/signup', (req, res) => {
+  console.log('signUp')
   const { body } = req;
   Presentor.findOrCreate({
     where: {
@@ -29,6 +30,7 @@ router.post('/signup', (req, res) => {
 
 // 로그인
 router.post('/signin', (req, res) => {
+  console.log('signIn')
   const { body: { email, password } } = req;
   Presentor.findOne({
     where: {
