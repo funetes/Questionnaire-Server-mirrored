@@ -21,7 +21,7 @@ const verification = require("./Middlewares/verification");
 
 app.use(bodyParser.json());
 app.use(morgan("dev"));
-app.use(cors({ credentials: true, origin : 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin : ['http://localhost:3000', 'http://questionnaire-deploy.s3-website.ap-northeast-2.amazonaws.com'] }));
 app.use(verification);
 
 app.get("/", (req, res) => {
