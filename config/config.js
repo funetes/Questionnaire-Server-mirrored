@@ -6,10 +6,11 @@ const development = {
   database: process.env.DEVDATABASE,
   host: process.env.HOST,
   dialect: 'mysql',
-  options : {
-    timezone: '+09:00',
-  }
+  timezone: '+09:00',
+  dialectOptions: { charset: 'utf8mb4', dateStrings: true, typeCast: true },
+  define: { timestamps: true },
 };
+
 
 const test = {
   username: 'root',
