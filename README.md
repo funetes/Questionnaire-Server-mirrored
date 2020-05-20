@@ -11,7 +11,7 @@
 ### Members
 
 - 전진철(team leader) : back-end, https://github.com/powellstreet
-- 김환(team member) : front-end, https://github.com/funetes
+- 김환(team member) : back-end, https://github.com/funetes
 - 이종현(team member) : front-end, https://github.com/Jumpis
 
 ### Service Flow
