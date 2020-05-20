@@ -43,8 +43,10 @@
 이벤트별 질문방 개설가능
 ![Alt text](readmeImg/createEvent.png)
 
-질문 등록 & 좋아요 버튼을 통해 질문의 선호도 확인 가능
+질문 등록 &
+좋아요 버튼을 통해 질문의 선호도 확인 가능 &
+익명 유저의 좋아요 toggle
 ![Alt text](readmeImg/addQuestion.gif)
 
-익명 유저의 좋아요 toggle
+발표자 질문 답변시 청중콘솔에서 해당 질문을 hide처리
 ![Alt text](readmeImg/likeToggle.gif)
