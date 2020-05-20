@@ -50,3 +50,5 @@
 
 발표자 질문 답변시 청중콘솔에서 해당 질문을 hide처리
 ![Alt text](readmeImg/likeToggle.gif)
+
+바로가기 : [Questionnaire](http://questionnaire-deploy.s3-website.ap-northeast-2.amazonaws.com/mainpage)
