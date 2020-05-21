@@ -28,27 +28,38 @@
 
 ### Demonstration
 
-사용자 선택 이미지
+##### 사용자 선택
+
 ![Alt text](readmeImg/intro.png)
 
-발표자 회원가입
-![Alt text](readmeImg/signup.png)
+##### 발표자 회원가입
 
-발표자 로그인 & 청중 입장
-![Alt text](readmeImg/presenterAndAudience.png)
+<p align='center'>
+  <img src='readmeImg/signup.gif' />
+</p>
 
-발표자 콘솔
-![Alt text](readmeImg/afterLogin.png)
+##### 발표자 로그인
 
-이벤트별 질문방 개설가능
-![Alt text](readmeImg/createEvent.png)
+<p align='center'>
+  <img src='readmeImg/login.gif' />
+</p>
 
-질문 등록 &
-좋아요 버튼을 통해 질문의 선호도 확인 가능 &
-익명 유저의 좋아요 toggle
-![Alt text](readmeImg/addQuestion.gif)
+##### 이벤트별 질문방 개설가능
 
-발표자 질문 답변시 청중콘솔에서 해당 질문을 hide처리
-![Alt text](readmeImg/likeToggle.gif)
+<p align='center'>
+  <img src='readmeImg/createEvent.gif' />
+</p>
 
-바로가기 : [Questionnaire](http://questionnaire-deploy.s3-website.ap-northeast-2.amazonaws.com/mainpage)
+##### 청중 이벤트 입장
+
+<p align='center'>
+  <img src='readmeImg/jointoEvent.gif' />
+</p>
+
+##### 질문등록, 좋아요
+
+<p align='center'>
+  <img src='readmeImg/registerQuestion.gif' />
+</p>
+
+go to : [Questionnaire](http://questionnaire-deploy.s3-website.ap-northeast-2.amazonaws.com/mainpage)
